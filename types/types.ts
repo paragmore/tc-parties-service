@@ -82,6 +82,12 @@ export interface CreatePartyRequestI {
   address: AdrressesI;
 }
 
+export interface GetPartyByIdQueryParams {
+  storeId: string;
+  partyId: string;
+  type: PartyTypeEnum;
+}
+
 export interface PartiesFilterByI {
   category?: string[];
   minSellsPrice?: number;

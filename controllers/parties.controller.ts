@@ -10,6 +10,7 @@ import {
   CreatePartyRequestI,
   GetCategoriesQueryParamsI,
   GetPartiesQueryParamsI,
+  GetPartyByIdQueryParams,
   PartyTypeEnum,
   UpdatePartyRequestI,
 } from "../types/types";
@@ -147,98 +148,23 @@ export class PartiesController {
     ApiHelper.success(reply, response);
   };
 
-  getAllStoreCategories: ApiHelperHandler<
-    {},
-    GetCategoriesQueryParamsI,
-    {},
-    { storeId: string },
-    IReply
-  > = async (request, reply) => {
-    const { query, params } = request;
-    const pageSize = (query.pageSize && parseInt(query.pageSize)) || 10;
-    const page = (query.page && parseInt(query.page)) || 1;
-    const nextPage = page + 1;
-    const previousPage = page - 1;
-    const { sortBy, sortOrder } = query;
-
-    const categoriesResponse = await this.partiesService.getAllStoreCategories(
-      params.storeId,
-      page,
-      pageSize,
-      {
-        sortBy,
-        sortOrder,
-      }
-    );
-    if (categoriesResponse instanceof ApiError) {
-      ApiHelper.callFailed(
-        reply,
-        categoriesResponse.message,
-        categoriesResponse.code
-      );
-      return;
-    }
-    const response = {
-      categories: categoriesResponse.categories,
-      pagination: {
-        pageSize,
-        page,
-        nextPage,
-        previousPage,
-        totalPages: Math.ceil(categoriesResponse.totalCount / pageSize),
-        totalResults: categoriesResponse.totalCount,
-      },
-    };
-    ApiHelper.success(reply, response);
-  };
-
-  getStoreCategoryById: ApiHelperHandler<
-    {},
-    {},
-    {},
-    { storeId: string; categoryId: string },
-    IReply
-  > = async (request, reply) => {
-    const { params } = request;
-    const { categoryId, storeId } = params;
-    const isValidStoreId = isValidObjectId(storeId);
-    if (!isValidStoreId) {
-      return ApiHelper.callFailed(reply, "Please pass valid storeId", 400);
-    }
-
-    const isValidCategoryId = isValidObjectId(categoryId);
-    if (!isValidCategoryId) {
-      return ApiHelper.callFailed(reply, "Please pass valid categoryId", 400);
-    }
-    const categoryResponse = await this.partiesService.getStoreCategoryById(
-      storeId,
-      categoryId
-    );
-    if (!categoryResponse) {
-      return ApiHelper.success(
-        reply,
-        "Category with the given id not found in the store"
-      );
-    }
-    if (categoryResponse instanceof ApiError) {
-      return ApiHelper.callFailed(
-        reply,
-        categoryResponse.message,
-        categoryResponse.code
-      );
-    }
-    ApiHelper.success(reply, categoryResponse);
-  };
-
   getStorePartyById: ApiHelperHandler<
     {},
     {},
     {},
-    { storeId: string; partyId: string },
+    GetPartyByIdQueryParams,
     IReply
   > = async (request, reply) => {
     const { params } = request;
-    const { partyId, storeId } = params;
+    const { partyId, storeId, type } = params;
+
+    if (!Object.values(PartyTypeEnum).includes(type)) {
+      return ApiHelper.callFailed(
+        reply,
+        "Please provide correct party type",
+        400
+      );
+    }
     const isValidStoreId = isValidObjectId(storeId);
     if (!isValidStoreId) {
       return ApiHelper.callFailed(reply, "Please pass valid storeId", 400);
@@ -250,7 +176,8 @@ export class PartiesController {
     }
     const partiesResponse = await this.partiesService.getStorePartyById(
       storeId,
-      partyId
+      partyId,
+      type
     );
     if (!partiesResponse) {
       return ApiHelper.success(

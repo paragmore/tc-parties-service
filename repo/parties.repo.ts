@@ -234,72 +234,42 @@ export class PartiesRepo {
     return supplier;
   }
 
-  async createParty(party: CreatePartyRequestI) {
-    // const { storeId, name } = party;
-    // const createdParty = await PartyModel.create({
-    //   storeId,
-    //   name,
-    // });
-    // return createdParty;
+  async getStoreCustomerById(storeId: string, customerId: string) {
+    try {
+      const customer = await CustomerModel.findOne({
+        storeId,
+        _id: customerId,
+      });
+      const customerStoreInfo = await CustomerStoreInfoModel.findOne({
+        storeId,
+        customerId,
+      });
+      return { customer, customerStoreInfo };
+    } catch (error) {
+      const mongooseError = error as MongooseError;
+      console.log(mongooseError.name);
+      if (mongooseError.name === "CastError") {
+        return new ApiError("Please pass valid customer id", 400);
+      }
+      return new ApiError(mongooseError.message, 500);
+    }
   }
 
-  async updateParty(id: Types.ObjectId, party: any) {
-    // const {
-    //   name,
-    //   description,
-    //   sellsPrice,
-    //   purchasePrice,
-    //   category,
-    //   variants,
-    //   heroImage,
-    //   images,
-    //   quantity,
-    //   discounts,
-    //   hsnCode,
-    //   taxIncluded,
-    //   unit,
-    //   purchaseUnit,
-    //   gstPercentage,
-    //   deliveryTime,
-    //   isInventory,
-    //   inventoryParties,
-    //   lowStock,
-    // } = party;
-    // const updatedParty = await PartyModel.findByIdAndUpdate(id, {
-    //   name,
-    //   description,
-    //   sellsPrice,
-    //   purchasePrice,
-    //   category,
-    //   variants,
-    //   heroImage,
-    //   images,
-    //   quantity,
-    //   discounts,
-    //   hsnCode,
-    //   taxIncluded,
-    //   unit,
-    //   purchaseUnit,
-    //   gstPercentage,
-    //   deliveryTime,
-    //   isInventory,
-    //   inventoryParties,
-    //   lowStock,
-    // });
-    // return updatedParty;
-  }
-  async getStorePartyById(storeId: string, partyId: string) {
-    // try {
-    //   const party = await PartyModel.findOne({ storeId, _id: partyId });
-    //   return party;
-    // } catch (error) {
-    //   const mongooseError = error as MongooseError;
-    //   console.log(mongooseError.name);
-    //   if (mongooseError.name === "CastError") {
-    //     return new ApiError("Please pass valid party id", 400);
-    //   }
-    //   return new ApiError(mongooseError.message, 500);
-    // }
+  async getStoreSupplierById(storeId: string, supplierId: string) {
+    try {
+      const supplier = await SupplierModel.findOne({
+        storeId,
+        _id: supplierId,
+      });
+      return supplier;
+    } catch (error) {
+      const mongooseError = error as MongooseError;
+      console.log(mongooseError.name);
+      if (mongooseError.name === "CastError") {
+        return new ApiError("Please pass valid customer id", 400);
+      }
+      return new ApiError(mongooseError.message, 500);
+    }
   }
 
   async getAllStoreParties(

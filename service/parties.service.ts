@@ -32,30 +32,24 @@ export class PartiesService {
     if (type === PartyTypeEnum.SUPPLIER) {
       return await this.partiesRepo.updateSupplierParty(party);
     }
+    return new ApiError("Party Type not found", 500);
   }
 
-  async getStorePartyById(storeId: string, partyId: string) {
+  async getStorePartyById(
+    storeId: string,
+    partyId: string,
+    type: PartyTypeEnum
+  ) {
     try {
-      const response = await this.partiesRepo.getStorePartyById(
-        storeId,
-        partyId
-      );
-      return response;
+      if (type === PartyTypeEnum.CUSTOMER) {
+        return await this.partiesRepo.getStoreCustomerById(storeId, partyId);
+      }
+      if (type === PartyTypeEnum.SUPPLIER) {
+        return await this.partiesRepo.getStoreSupplierById(storeId, partyId);
+      }
+      return new ApiError("Party Type not found", 500);
     } catch (error) {
       console.log("getAllStoreParties service", error);
-      return new ApiError("Something went wrong, Please try again", 500);
-    }
-  }
-
-  async getStoreCategoryById(storeId: string, categoryId: string) {
-    try {
-      const response = await this.partiesRepo.getStoreCategoryById(
-        storeId,
-        categoryId
-      );
-      return response;
-    } catch (error) {
-      console.log("getStoreCategoryById service", error);
       return new ApiError("Something went wrong, Please try again", 500);
     }
   }
@@ -78,26 +72,6 @@ export class PartiesService {
       return response;
     } catch (error) {
       console.log("getAllStoreParties service", error);
-      return new ApiError("Something went wrong, Please try again", 500);
-    }
-  }
-
-  async getAllStoreCategories(
-    storeId: string,
-    page: number,
-    pageSize: number,
-    sort?: SortI
-  ) {
-    try {
-      const response = await this.partiesRepo.getAllStoreCategories(
-        storeId,
-        page,
-        pageSize,
-        sort
-      );
-      return response;
-    } catch (error) {
-      console.log("getAllStoreCategories service", error);
       return new ApiError("Something went wrong, Please try again", 500);
     }
   }
