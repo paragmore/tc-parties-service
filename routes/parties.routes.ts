@@ -14,12 +14,6 @@ export default async (app: FastifyInstance) => {
   const partiesController =
     container.resolve<PartiesController>(PartiesController);
 
-  // ApiHelper.get<{}, {}, {}>(
-  //   app,
-  //   "/",
-  //   partiesController.createParty.bind(partiesController)
-  // );
-
   ApiHelper.put<UpdatePartyRequestI, {}, {}, {}>(
     app,
     "/update",

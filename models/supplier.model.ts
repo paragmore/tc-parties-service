@@ -12,17 +12,25 @@ const supplierSchema = new Schema(
     name: {
       type: String,
     },
+    balance: {
+      type: Number,
+      default: 0,
+    },
+    gstin: {
+      type: String,
+    },
     addresses: [addressesSchema],
     photoUrl: {
       type: String,
-    },
-    lastLogin: {
-      type: Date,
     },
     storeId: {
       type: Schema.Types.ObjectId,
       ref: "Store",
       required: true,
+    },
+    supplierStoreId: {
+      type: Schema.Types.ObjectId,
+      ref: "Store",
     },
   },
   { timestamps: true }

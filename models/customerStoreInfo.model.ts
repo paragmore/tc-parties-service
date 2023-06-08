@@ -26,7 +26,7 @@ const customerStoreInfoSchema = new Schema({
     type: String,
   },
   addresses: [addressesSchema],
-  customer: {
+  customerId: {
     type: Schema.Types.ObjectId,
     ref: "Customer",
     required: true,

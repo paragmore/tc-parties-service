@@ -10,6 +10,7 @@ import {
   CreatePartyRequestI,
   GetCategoriesQueryParamsI,
   GetPartiesQueryParamsI,
+  PartyTypeEnum,
   UpdatePartyRequestI,
 } from "../types/types";
 import { isValidObjectId } from "mongoose";
@@ -28,6 +29,14 @@ export class PartiesController {
         !body.type
       ) {
         return ApiHelper.missingParameters(reply);
+      }
+
+      if (!Object.values(PartyTypeEnum).includes(body.type)) {
+        return ApiHelper.callFailed(
+          reply,
+          "Please provide correct party type",
+          400
+        );
       }
 
       const isValidStoreId = isValidObjectId(body.storeId);

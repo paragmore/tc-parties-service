@@ -14,26 +14,38 @@ export interface SearchQueryI {
 
 export interface CustomerI {
   phoneNumber: string;
-  name: string;
+  name?: string;
   email?: string;
   gstin?: string;
-  addresses: Array<AdrressesI>;
+  addresses?: Array<AdrressesI>;
   photoUrl?: string;
   lastLogin?: Date;
-  searchQueries: Array<SearchQueryI>;
-  reviews: Array<Types.ObjectId>;
-  favouriteProducts: Array<Types.ObjectId>;
+  searchQueries?: Array<SearchQueryI>;
+  reviews?: Array<Types.ObjectId>;
+  favouriteProducts?: Array<Types.ObjectId>;
 }
 
-export interface CustomerStoreInfo {
-  cart: Types.ObjectId;
-  totalSpent: number;
-  storeId: Types.ObjectId;
-  balance: number;
+export interface SupplierI {
+  phoneNumber: string;
   email?: string;
   name?: string;
-  addresses: Array<AdrressesI>;
-  customer: Types.ObjectId;
+  balance?: number;
+  gstin?: string;
+  addresses?: Array<AdrressesI>;
+  photoUrl?: string;
+  storeId: Types.ObjectId;
+  supplierStoreId?: Types.ObjectId;
+}
+
+export interface CustomerStoreInfoI {
+  cart?: Types.ObjectId;
+  totalSpent?: number;
+  storeId: Types.ObjectId;
+  balance?: number;
+  email?: string;
+  name?: string;
+  addresses?: Array<AdrressesI>;
+  customerId: Types.ObjectId;
   gstin?: string;
 }
 

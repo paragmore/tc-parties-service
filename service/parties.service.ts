@@ -3,6 +3,7 @@ import { PartiesRepo } from "../repo/parties.repo";
 import {
   CreatePartyRequestI,
   PartiesFilterByI,
+  PartyTypeEnum,
   SortI,
   UpdatePartyRequestI,
 } from "../types/types";
@@ -13,6 +14,12 @@ export class PartiesService {
   constructor(@inject(PartiesRepo) private partiesRepo: PartiesRepo) {}
 
   async createParty(party: CreatePartyRequestI) {
+    const { type } = party;
+    if (type === PartyTypeEnum.CUSTOMER) {
+      await this.partiesRepo.createCustomerParty(party);
+    }
+    if (type === PartyTypeEnum.SUPPLIER) {
+    }
     return await this.partiesRepo.createParty(party);
   }
 

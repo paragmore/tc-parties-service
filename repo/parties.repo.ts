@@ -4,6 +4,7 @@ import {
   PartiesFilterByI,
   SortI,
   CustomerI,
+  CustomerStoreInfoI,
 } from "../types/types";
 import { MongooseError, SortOrder, Types } from "mongoose";
 import { CustomerModel } from "../models/customer.model";
@@ -41,7 +42,49 @@ export class PartiesRepo {
     return createdCustomer;
   }
 
-  async createCustomerStoreInfo() {}
+  async createSupplier(createSupplierRequest: SupplierI) {}
+
+  async createCustomerParty(party: CreatePartyRequestI) {
+    const customer = await this.createCustomer({
+      phoneNumber: party.phoneNumber,
+    });
+    const customerStoreInfo = await this.createCustomerStoreInfo({
+      ...party,
+      customerId: customer._id,
+    });
+  }
+
+  async createSupplierParty(party: CreatePartyRequestI) {
+    const supplier = await this.createSupplier({
+      phoneNumber: party.phoneNumber,
+    });
+  }
+
+  async createCustomerStoreInfo(customerStoreInfo: CustomerStoreInfoI) {
+    const {
+      addresses,
+      balance,
+      cart,
+      customerId,
+      storeId,
+      totalSpent,
+      email,
+      gstin,
+      name,
+    } = customerStoreInfo;
+    const createdCustomerStoreInfo = await CustomerModel.create({
+      addresses,
+      balance,
+      cart,
+      customerId,
+      storeId,
+      totalSpent,
+      email,
+      gstin,
+      name,
+    });
+    return createdCustomerStoreInfo;
+  }
   async createParty(party: CreatePartyRequestI) {
     // const { storeId, name } = party;
     // const createdParty = await PartyModel.create({
