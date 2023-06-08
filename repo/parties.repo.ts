@@ -6,11 +6,14 @@ import {
   CustomerI,
   CustomerStoreInfoI,
   SupplierI,
+  UpdatePartyRequestI,
 } from "../types/types";
 import { MongooseError, SortOrder, Types } from "mongoose";
 import { CustomerModel } from "../models/customer.model";
 import { ApiError } from "../utils/ApiHelper";
 import { StoreModel } from "../models/store.model";
+import { CustomerStoreInfoModel } from "../models/customerStoreInfo.model";
+import { SupplierModel } from "../models/supplier.model";
 
 @injectable()
 export class PartiesRepo {
@@ -44,7 +47,31 @@ export class PartiesRepo {
     return createdCustomer;
   }
 
-  async createSupplier(createSupplierRequest: SupplierI) {}
+  async createSupplier(createSupplierRequest: SupplierI) {
+    const {
+      phoneNumber,
+      addresses,
+      email,
+      gstin,
+      name,
+      photoUrl,
+      storeId,
+      balance,
+      supplierStoreId,
+    } = createSupplierRequest;
+    const createdCustomer = await SupplierModel.create({
+      phoneNumber,
+      addresses,
+      email,
+      gstin,
+      name,
+      photoUrl,
+      storeId,
+      balance,
+      supplierStoreId,
+    });
+    return createdCustomer;
+  }
 
   async createCustomerParty(party: CreatePartyRequestI) {
     const customer = await this.createCustomer({
@@ -71,7 +98,7 @@ export class PartiesRepo {
       const supplier = await this.createSupplier({
         ...party,
       });
-      return party;
+      return supplier;
     }
   }
 
@@ -87,7 +114,7 @@ export class PartiesRepo {
       gstin,
       name,
     } = customerStoreInfo;
-    const createdCustomerStoreInfo = await CustomerModel.create({
+    const createdCustomerStoreInfo = await CustomerStoreInfoModel.create({
       addresses,
       balance,
       cart,
@@ -100,6 +127,113 @@ export class PartiesRepo {
     });
     return createdCustomerStoreInfo;
   }
+
+  async updateCustomer(
+    customerId: Types.ObjectId,
+    updateCustomerRequest: CustomerI
+  ) {
+    const {
+      addresses,
+      favouriteProducts,
+      reviews,
+      searchQueries,
+      email,
+      gstin,
+      lastLogin,
+      name,
+      photoUrl,
+    } = updateCustomerRequest;
+    const updatedCustomer = await CustomerModel.findByIdAndUpdate(customerId, {
+      addresses,
+      favouriteProducts,
+      reviews,
+      searchQueries,
+      email,
+      gstin,
+      lastLogin,
+      name,
+      photoUrl,
+    });
+    return updatedCustomer;
+  }
+
+  async updateCustomerStoreInfo(
+    customerId: Types.ObjectId,
+    customerStoreInfo: CustomerStoreInfoI
+  ) {
+    const {
+      addresses,
+      balance,
+      cart,
+      storeId,
+      totalSpent,
+      email,
+      gstin,
+      name,
+    } = customerStoreInfo;
+    const updatedCustomerStoreInfo =
+      await CustomerStoreInfoModel.findOneAndUpdate(
+        { customerId },
+        {
+          addresses,
+          balance,
+          cart,
+          storeId,
+          totalSpent,
+          email,
+          gstin,
+          name,
+        }
+      );
+    return updatedCustomerStoreInfo;
+  }
+  async updateCustomerParty(party: UpdatePartyRequestI) {
+    const customerStoreInfo = await this.updateCustomerStoreInfo(
+      party.partyId,
+      {
+        ...party,
+        customerId: party.partyId,
+      }
+    );
+    return customerStoreInfo;
+  }
+
+  async updateSupplier(
+    supplierId: Types.ObjectId,
+    updateSupplierRequest: SupplierI
+  ) {
+    const {
+      phoneNumber,
+      addresses,
+      email,
+      gstin,
+      name,
+      photoUrl,
+      storeId,
+      balance,
+      supplierStoreId,
+    } = updateSupplierRequest;
+    const createdCustomer = await SupplierModel.findByIdAndUpdate(supplierId, {
+      phoneNumber,
+      addresses,
+      email,
+      gstin,
+      name,
+      photoUrl,
+      storeId,
+      balance,
+      supplierStoreId,
+    });
+    return createdCustomer;
+  }
+
+  async updateSupplierParty(party: UpdatePartyRequestI) {
+    const supplier = await this.updateSupplier(party.partyId, {
+      ...party,
+    });
+    return supplier;
+  }
+
   async createParty(party: CreatePartyRequestI) {
     // const { storeId, name } = party;
     // const createdParty = await PartyModel.create({

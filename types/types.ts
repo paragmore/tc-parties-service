@@ -1,6 +1,16 @@
 import { Document, Schema, SortOrder, Types } from "mongoose";
 
-export interface UpdatePartyRequestI {}
+export interface UpdatePartyRequestI {
+  partyId: Types.ObjectId;
+  type: PartyTypeEnum;
+  storeId: Types.ObjectId;
+  phoneNumber: string;
+  name?: string;
+  email?: string;
+  balance?: number;
+  gstin?: string;
+  address?: AdrressesI;
+}
 
 export enum PartyTypeEnum {
   CUSTOMER = "customer",

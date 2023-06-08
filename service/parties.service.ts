@@ -25,13 +25,13 @@ export class PartiesService {
   }
 
   async updateParty(party: UpdatePartyRequestI) {
-    // return await this.partiesRepo.updateParty(party.partyId, {
-    //   ...party,
-    //   unit: { name: party.unit },
-    //   purchaseUnit,
-    //   storeId: new Types.ObjectId(),
-    //   slug: "",
-    // });
+    const { type } = party;
+    if (type === PartyTypeEnum.CUSTOMER) {
+      return await this.partiesRepo.updateCustomerParty(party);
+    }
+    if (type === PartyTypeEnum.SUPPLIER) {
+      return await this.partiesRepo.updateSupplierParty(party);
+    }
   }
 
   async getStorePartyById(storeId: string, partyId: string) {

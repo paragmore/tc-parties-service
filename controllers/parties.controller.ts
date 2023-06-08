@@ -56,21 +56,29 @@ export class PartiesController {
   updateParty: ApiHelperHandler<UpdatePartyRequestI, {}, {}, {}, IReply> =
     async (request, reply) => {
       const { body } = request;
-      // if (!body || !body.partyId) {
-      //   return ApiHelper.missingParameters(reply);
-      // }
+      if (!body || !body.partyId || !body.type) {
+        return ApiHelper.missingParameters(reply);
+      }
 
-      // const isValidPartyId = isValidObjectId(body.partyId);
-      // if (!isValidPartyId) {
-      //   return ApiHelper.callFailed(reply, "Please pass valid PartyId", 400);
-      // }
-      // try {
-      //   const response = await this.partiesService.updateParty(body);
-      //   return ApiHelper.success(reply, response);
-      // } catch (error) {
-      //   //@ts-ignore
-      //   return ApiHelper.callFailed(reply, error.message, 500);
-      // }
+      if (!Object.values(PartyTypeEnum).includes(body.type)) {
+        return ApiHelper.callFailed(
+          reply,
+          "Please provide correct party type",
+          400
+        );
+      }
+
+      const isValidPartyId = isValidObjectId(body.partyId);
+      if (!isValidPartyId) {
+        return ApiHelper.callFailed(reply, "Please pass valid PartyId", 400);
+      }
+      try {
+        const response = await this.partiesService.updateParty(body);
+        return ApiHelper.success(reply, response);
+      } catch (error) {
+        //@ts-ignore
+        return ApiHelper.callFailed(reply, error.message, 500);
+      }
     };
 
   getAllStoreParties: ApiHelperHandler<
