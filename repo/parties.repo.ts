@@ -272,33 +272,91 @@ export class PartiesRepo {
     }
   }
 
-  async getAllStoreParties(
+  async getAllStoreCustomers(
     storeId: string,
     page: number,
     pageSize: number,
     sort?: SortI,
     filterBy?: PartiesFilterByI
   ) {
-    // let sortBy: { [key: string]: SortOrder };
-    // if (!sort?.sortBy) {
-    //   sortBy = { _id: -1 };
-    // } else {
-    //   sortBy = { [sort.sortBy]: sort.sortOrder ? sort.sortOrder : "asc" };
-    // }
-    // console.log(sortBy);
-    // const skipCount = (page - 1) * pageSize;
-    // let query = PartyModel.find().where({ storeId });
-    // let countQuery = PartyModel.find().where({ storeId });
-    // if (filterBy?.category && filterBy?.category?.length > 0) {
-    //   query.where({ category: { $in: filterBy?.category } });
-    //   countQuery.where({ category: { $in: filterBy?.category } });
-    // }
-    // const parties = await query
-    //   .sort(sortBy)
-    //   .skip(skipCount)
-    //   .limit(pageSize)
-    //   .exec();
-    // const totalCount = await countQuery.countDocuments().exec();
-    // return { parties, totalCount };
+    let sortBy: { [key: string]: SortOrder };
+    if (!sort?.sortBy) {
+      sortBy = { _id: -1 };
+    } else {
+      sortBy = { [sort.sortBy]: sort.sortOrder ? sort.sortOrder : "asc" };
+    }
+    console.log(sortBy);
+    const skipCount = (page - 1) * pageSize;
+    let query = CustomerModel.find().where({ storeId });
+    let countQuery = CustomerModel.find().where({ storeId });
+    if (filterBy?.balance) {
+      let queryFilterString =
+        filterBy.balance === "gt"
+          ? "$gt"
+          : filterBy.balance === "eq"
+          ? "$eq"
+          : filterBy.balance === "lt"
+          ? "$lt"
+          : "";
+      if (queryFilterString) {
+        query.where({ balance: { [queryFilterString]: 0 } });
+        countQuery.where({ balance: { [queryFilterString]: 0 } });
+      }
+    }
+    const parties = await query
+      .sort(sortBy)
+      .skip(skipCount)
+      .limit(pageSize)
+      .populate({
+        path: "customer",
+        model: "CustomerStoreInfo",
+        populate: {
+          path: "customerId",
+          model: "Customer",
+        },
+      })
+      .exec();
+    const totalCount = await countQuery.countDocuments().exec();
+    return { parties, totalCount };
+  }
+
+  async getAllStoreSuppliers(
+    storeId: string,
+    page: number,
+    pageSize: number,
+    sort?: SortI,
+    filterBy?: PartiesFilterByI
+  ) {
+    let sortBy: { [key: string]: SortOrder };
+    if (!sort?.sortBy) {
+      sortBy = { _id: -1 };
+    } else {
+      sortBy = { [sort.sortBy]: sort.sortOrder ? sort.sortOrder : "asc" };
+    }
+    console.log(sortBy);
+    const skipCount = (page - 1) * pageSize;
+    let query = SupplierModel.find().where({ storeId });
+    let countQuery = SupplierModel.find().where({ storeId });
+    if (filterBy?.balance) {
+      let queryFilterString =
+        filterBy.balance === "gt"
+          ? "$gt"
+          : filterBy.balance === "eq"
+          ? "$eq"
+          : filterBy.balance === "lt"
+          ? "$lt"
+          : "";
+      if (queryFilterString) {
+        query.where({ balance: { [queryFilterString]: 0 } });
+        countQuery.where({ balance: { [queryFilterString]: 0 } });
+      }
+    }
+    const parties = await query
+      .sort(sortBy)
+      .skip(skipCount)
+      .limit(pageSize)
+      .exec();
+    const totalCount = await countQuery.countDocuments().exec();
+    return { parties, totalCount };
   }
 }

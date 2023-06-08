@@ -56,20 +56,32 @@ export class PartiesService {
 
   async getAllStoreParties(
     storeId: string,
+    type: PartyTypeEnum,
     page: number,
     pageSize: number,
     sort?: SortI,
     filterBy?: PartiesFilterByI
   ) {
     try {
-      const response = await this.partiesRepo.getAllStoreParties(
-        storeId,
-        page,
-        pageSize,
-        sort,
-        filterBy
-      );
-      return response;
+      if (type === PartyTypeEnum.CUSTOMER) {
+        return await this.partiesRepo.getAllStoreCustomers(
+          storeId,
+          page,
+          pageSize,
+          sort,
+          filterBy
+        );
+      }
+      if (type === PartyTypeEnum.SUPPLIER) {
+        return await this.partiesRepo.getAllStoreSuppliers(
+          storeId,
+          page,
+          pageSize,
+          sort,
+          filterBy
+        );
+      }
+      return new ApiError("Party Type not found", 500);
     } catch (error) {
       console.log("getAllStoreParties service", error);
       return new ApiError("Something went wrong, Please try again", 500);

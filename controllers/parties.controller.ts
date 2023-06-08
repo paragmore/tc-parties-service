@@ -8,7 +8,7 @@ import {
 } from "../utils/ApiHelper";
 import {
   CreatePartyRequestI,
-  GetCategoriesQueryParamsI,
+  GetAllStorePartiesParams,
   GetPartiesQueryParamsI,
   GetPartyByIdQueryParams,
   PartyTypeEnum,
@@ -86,7 +86,7 @@ export class PartiesController {
     {},
     GetPartiesQueryParamsI,
     {},
-    { storeId: string },
+    GetAllStorePartiesParams,
     IReply
   > = async (request, reply) => {
     const { query, params } = request;
@@ -94,30 +94,22 @@ export class PartiesController {
     const page = (query.page && parseInt(query.page)) || 1;
     const nextPage = page + 1;
     const previousPage = page - 1;
-    const {
-      sortBy,
-      sortOrder,
-      category,
-      maxPurchasePrice,
-      maxQuantity,
-      maxSellsPrice,
-      minPurchasePrice,
-      minQuantity,
-      minSellsPrice,
-    } = query;
+    const { sortBy, sortOrder, balance } = query;
 
-    const filterCategories = category ? category.split(",") : [];
+    if (!Object.values(PartyTypeEnum).includes(params.type)) {
+      return ApiHelper.callFailed(
+        reply,
+        "Please provide correct party type",
+        400
+      );
+    }
+
     const filterBy = {
-      maxPurchasePrice,
-      maxQuantity,
-      maxSellsPrice,
-      minPurchasePrice,
-      minQuantity,
-      minSellsPrice,
-      category: filterCategories,
+      balance,
     };
     const partiesResponse = await this.partiesService.getAllStoreParties(
       params.storeId,
+      params.type,
       page,
       pageSize,
       {

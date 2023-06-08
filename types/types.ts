@@ -89,23 +89,11 @@ export interface GetPartyByIdQueryParams {
 }
 
 export interface PartiesFilterByI {
-  category?: string[];
-  minSellsPrice?: number;
-  maxSellsPrice?: number;
-  minPurchasePrice?: number;
-  maxPurchasePrice?: number;
-  minQuantity?: number;
-  maxQuantity?: number;
+  balance?: "lt" | "eq" | "gt";
 }
 
 export interface PartiesFilterByQueryI {
-  category?: string;
-  minSellsPrice?: number;
-  maxSellsPrice?: number;
-  minPurchasePrice?: number;
-  maxPurchasePrice?: number;
-  minQuantity?: number;
-  maxQuantity?: number;
+  balance?: "lt" | "eq" | "gt";
 }
 
 export interface SortI {
@@ -116,11 +104,14 @@ export interface GetPartiesQueryParamsI
   extends PartiesFilterByQueryI,
     PaginationQueryParamsI {}
 
-export interface GetCategoriesQueryParamsI extends PaginationQueryParamsI {}
-
 export interface PaginationQueryParamsI {
   pageSize?: string;
   page?: string;
   sortBy?: string;
   sortOrder?: SortOrder;
+}
+
+export interface GetAllStorePartiesParams {
+  storeId: string;
+  type: PartyTypeEnum;
 }

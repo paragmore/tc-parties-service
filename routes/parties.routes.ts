@@ -5,7 +5,7 @@ import container from "../inversify.config";
 import { ApiHelper } from "../utils/ApiHelper";
 import {
   CreatePartyRequestI,
-  GetCategoriesQueryParamsI,
+  GetAllStorePartiesParams,
   GetPartiesQueryParamsI,
   GetPartyByIdQueryParams,
   UpdatePartyRequestI,
@@ -27,7 +27,7 @@ export default async (app: FastifyInstance) => {
     partiesController.updateParty.bind(partiesController)
   );
 
-  ApiHelper.get<GetPartiesQueryParamsI, { storeId: string }, {}>(
+  ApiHelper.get<GetPartiesQueryParamsI, GetAllStorePartiesParams, {}>(
     app,
     "/:storeId",
     partiesController.getAllStoreParties.bind(partiesController)
