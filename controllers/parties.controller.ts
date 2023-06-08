@@ -7,7 +7,6 @@ import {
   IReply,
 } from "../utils/ApiHelper";
 import {
-  CreateCategoryRequestI,
   CreatePartyRequestI,
   GetCategoriesQueryParamsI,
   GetPartiesQueryParamsI,
@@ -25,10 +24,8 @@ export class PartiesController {
         !body ||
         !body.storeId ||
         !body.name ||
-        !body.sellsPrice ||
-        !body.category ||
-        !body.quantity ||
-        !body.unit
+        !body.phoneNumber ||
+        !body.type
       ) {
         return ApiHelper.missingParameters(reply);
       }
@@ -38,16 +35,6 @@ export class PartiesController {
         return ApiHelper.callFailed(reply, "Please pass valid storeId", 400);
       }
 
-      body.category.map((cat) => {
-        const isValidCategory = isValidObjectId(cat);
-        if (!isValidCategory) {
-          return ApiHelper.callFailed(
-            reply,
-            `Please pass valid categoryId: ${cat}`,
-            400
-          );
-        }
-      });
       try {
         const response = await this.partiesService.createParty(body);
         return ApiHelper.success(reply, response);
@@ -60,54 +47,21 @@ export class PartiesController {
   updateParty: ApiHelperHandler<UpdatePartyRequestI, {}, {}, {}, IReply> =
     async (request, reply) => {
       const { body } = request;
-      if (!body || !body.partyId) {
-        return ApiHelper.missingParameters(reply);
-      }
+      // if (!body || !body.partyId) {
+      //   return ApiHelper.missingParameters(reply);
+      // }
 
-      const isValidPartyId = isValidObjectId(body.partyId);
-      if (!isValidPartyId) {
-        return ApiHelper.callFailed(reply, "Please pass valid PartyId", 400);
-      }
-
-      body.category.map((cat) => {
-        const isValidCategory = isValidObjectId(cat);
-        if (!isValidCategory) {
-          return ApiHelper.callFailed(
-            reply,
-            `Please pass valid categoryId: ${cat}`,
-            400
-          );
-        }
-      });
-      try {
-        const response = await this.partiesService.updateParty(body);
-        return ApiHelper.success(reply, response);
-      } catch (error) {
-        //@ts-ignore
-        return ApiHelper.callFailed(reply, error.message, 500);
-      }
-    };
-
-  createCategory: ApiHelperHandler<CreateCategoryRequestI, {}, {}, {}, IReply> =
-    async (request, reply) => {
-      const { body } = request;
-      if (!body || !body.storeId || !body.name) {
-        return ApiHelper.missingParameters(reply);
-      }
-      const isValidStoreId = isValidObjectId(body.storeId);
-      if (!isValidStoreId) {
-        return ApiHelper.callFailed(reply, "Please pass valid storeId", 400);
-      }
-      try {
-        const response = await this.partiesService.createCategory(body);
-        if (response instanceof ApiError) {
-          return ApiHelper.callFailed(reply, response.message, response.code);
-        }
-        return ApiHelper.success(reply, response);
-      } catch (error) {
-        //@ts-ignore
-        return ApiHelper.callFailed(reply, error.message, 500);
-      }
+      // const isValidPartyId = isValidObjectId(body.partyId);
+      // if (!isValidPartyId) {
+      //   return ApiHelper.callFailed(reply, "Please pass valid PartyId", 400);
+      // }
+      // try {
+      //   const response = await this.partiesService.updateParty(body);
+      //   return ApiHelper.success(reply, response);
+      // } catch (error) {
+      //   //@ts-ignore
+      //   return ApiHelper.callFailed(reply, error.message, 500);
+      // }
     };
 
   getAllStoreParties: ApiHelperHandler<

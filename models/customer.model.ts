@@ -1,73 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import { addressesSchema } from "./address.model";
 
-const customerStoreInfoSchema = new Schema({
-  cart: {
-    type: Schema.Types.ObjectId,
-    ref: "Cart",
-  },
-  searchQueries: [
-    {
-      type: String,
-    },
-  ],
-  totalSpent: {
-    type: Number,
-    default: 0,
-  },
-  storeId: {
-    type: Schema.Types.ObjectId,
-    ref: "Store",
-    required: true,
-  },
-  balance: {
-    type: Number,
-    default: 0,
-  },
-});
-const addressSchema = new Schema({
-  line1: {
-    type: String,
-    required: true,
-  },
-  line2: {
-    type: String,
-    required: true,
-  },
-  city: {
-    type: String,
-    required: true,
-  },
-  state: {
-    type: String,
-    required: true,
-  },
-  pinCode: {
-    type: String,
-    required: true,
-  },
-});
-const addressesSchema = new Schema({
-  shipping: {
-    type: addressSchema,
-    required: true,
-  },
-  billingSameAsShipping: {
-    type: Boolean,
-    required: true,
-  },
-  billing: {
-    type: addressSchema,
-  },
-  name: {
-    type: String,
-  },
-  phoneNumber: {
-    type: String,
-  },
-  type: {
-    type: String,
-  },
-});
 const customerSchema = new Schema(
   {
     phoneNumber: {
@@ -80,6 +13,9 @@ const customerSchema = new Schema(
     name: {
       type: String,
     },
+    gstin: {
+      type: String,
+    },
     addresses: [addressesSchema],
     photoUrl: {
       type: String,
@@ -87,7 +23,18 @@ const customerSchema = new Schema(
     lastLogin: {
       type: Date,
     },
-    customerStoresInfo: [customerStoreInfoSchema],
+    searchQueries: [
+      {
+        searchTerm: {
+          type: String,
+          required: true,
+        },
+        storeId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Store",
+        },
+      },
+    ],
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,

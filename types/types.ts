@@ -1,126 +1,63 @@
 import { Document, Schema, SortOrder, Types } from "mongoose";
 
-interface VariantPropertiesI {
-  [key: string]: string;
+export interface UpdatePartyRequestI {}
+
+export enum PartyTypeEnum {
+  CUSTOMER = "customer",
+  SUPPLIER = "supplier",
 }
 
-interface VariantI {
-  properties: VariantPropertiesI;
-  stockQuantity: number;
-  sellsPrice?: number;
-  skuId?: number;
-  discounts?: DiscountI[];
-  imageUrls?: string[];
-}
-
-interface UnitI {
-  quantity?: number;
-  name: string;
-  conversion?: number;
-}
-interface DiscountI {
-  type: "percentage" | "amount";
-  code: string;
-  minType: "orderQuantity" | "orderValue";
-  value: number;
-  minimum?: number;
-  maxDiscount?: number;
-}
-
-interface PartyI {
+export interface SearchQueryI {
+  searchTerm: string;
   storeId: Types.ObjectId;
-  name: string;
-  description?: string;
-  sellsPrice: number;
-  purchasePrice?: number;
-  category?: Types.ObjectId[];
-  variants?: VariantI[];
-  heroImage?: string;
-  images?: string[];
-  slug: string;
-  quantity: number;
-  discounts?: DiscountI[];
-  hsnCode?: string;
-  taxIncluded?: boolean;
-  unit: UnitI;
-  purchaseUnit?: UnitI;
-  gstPercentage?: number;
-  deliveryTime?: string;
-  isInventory?: boolean;
-  inventoryParties?: InventoryPartyI[];
-  lowStock?: number;
 }
 
-export interface InventoryPartyI {
-  partyId: Types.ObjectId;
-  amountConsumed: number;
+export interface CustomerI {
+  phoneNumber: string;
+  name: string;
+  email?: string;
+  gstin?: string;
+  addresses: Array<AdrressesI>;
+  photoUrl?: string;
+  lastLogin?: Date;
+  searchQueries: Array<SearchQueryI>;
+  reviews: Array<Types.ObjectId>;
+  favouriteProducts: Array<Types.ObjectId>;
 }
 
-interface PartyDocument extends Document, PartyI {}
-
-export {
-  VariantPropertiesI,
-  VariantI,
-  UnitI,
-  DiscountI,
-  PartyI,
-  PartyDocument,
-};
-
-export interface CategoryI {
-  name: string;
-  description: string;
+export interface CustomerStoreInfo {
+  cart: Types.ObjectId;
+  totalSpent: number;
   storeId: Types.ObjectId;
-  slug?: string;
+  balance: number;
+  email?: string;
+  name?: string;
+  addresses: Array<AdrressesI>;
+  customer: Types.ObjectId;
+  gstin?: string;
 }
 
-export interface CreateCategoryRequestI extends CategoryI {}
-
-export interface UpdatePartyRequestI {
-  partyId: Types.ObjectId;
-  name: string;
-  description?: string;
-  sellsPrice: number;
-  purchasePrice?: number;
-  category: Types.ObjectId[];
-  variants?: VariantI[];
-  heroImage?: string;
-  images?: string[];
-  quantity: number;
-  discounts?: DiscountI[];
-  hsnCode?: string;
-  taxIncluded?: boolean;
-  unit: string;
-  purchaseUnitName?: string;
-  purchaseUnitConversion?: number;
-  gstPercentage?: number;
-  deliveryTime?: string;
-  isInventory?: boolean;
-  inventoryParties?: InventoryPartyI[];
-  lowStock?: number;
+export interface AdrressesI {
+  shipping: AddressI;
+  billingSameAsShipping: boolean;
+  billing?: AddressI;
+}
+export interface AddressI {
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  pinCode: string;
 }
 export interface CreatePartyRequestI {
+  type: PartyTypeEnum;
   storeId: Types.ObjectId;
   name: string;
-  description?: string;
-  sellsPrice: number;
-  purchasePrice?: number;
-  category: Types.ObjectId[];
-  variants?: VariantI[];
-  heroImage?: string;
-  images?: string[];
-  quantity: number;
-  discounts?: DiscountI[];
-  hsnCode?: string;
-  taxIncluded?: boolean;
-  unit: string;
-  purchaseUnitName?: string;
-  purchaseUnitConversion?: number;
-  gstPercentage?: number;
-  deliveryTime?: string;
-  isInventory?: boolean;
-  inventoryParties?: InventoryPartyI[];
-  lowStock?: number;
+  phoneNumber: string;
+  email?: string;
+  balance?: number;
+  gstin?: string;
+  address: AdrressesI;
 }
 
 export interface PartiesFilterByI {

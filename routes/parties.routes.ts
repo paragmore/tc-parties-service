@@ -4,7 +4,6 @@ import { PartiesController } from "../controllers/parties.controller";
 import container from "../inversify.config";
 import { ApiHelper } from "../utils/ApiHelper";
 import {
-  CreateCategoryRequestI,
   CreatePartyRequestI,
   GetCategoriesQueryParamsI,
   GetPartiesQueryParamsI,
@@ -31,12 +30,6 @@ export default async (app: FastifyInstance) => {
     app,
     "/create",
     partiesController.createParty.bind(partiesController)
-  );
-
-  ApiHelper.post<CreateCategoryRequestI, {}, {}, {}>(
-    app,
-    "/category/create",
-    partiesController.createCategory.bind(partiesController)
   );
 
   ApiHelper.get<GetCategoriesQueryParamsI, { storeId: string }, {}>(

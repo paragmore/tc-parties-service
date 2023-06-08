@@ -1,70 +1,29 @@
 import { inject, injectable } from "inversify";
 import { PartiesRepo } from "../repo/parties.repo";
 import {
-  CreateCategoryRequestI,
   CreatePartyRequestI,
   PartiesFilterByI,
   SortI,
-  UnitI,
   UpdatePartyRequestI,
 } from "../types/types";
-import slugify from "slugify";
 import { ApiError } from "../utils/ApiHelper";
-import { Types } from "mongoose";
 
 @injectable()
 export class PartiesService {
   constructor(@inject(PartiesRepo) private partiesRepo: PartiesRepo) {}
 
   async createParty(party: CreatePartyRequestI) {
-    const { name, storeId } = party;
-    //convert the name to a unique slug
-    let slug = slugify(name, { lower: true });
-    const partyWithSameSlug = await this.partiesRepo.getStorePartyBySlug(
-      storeId,
-      slug
-    );
-    if (partyWithSameSlug) {
-      //append timestamp to make it unique
-      slug = `${slug}-${new Date().getTime()}`;
-    }
-    let purchaseUnit: UnitI | undefined =
-      party.purchaseUnitName && party.purchaseUnitConversion
-        ? {
-            name: party.purchaseUnitName,
-            conversion: party.purchaseUnitConversion,
-          }
-        : undefined;
-    return await this.partiesRepo.createParty({
-      ...party,
-      slug,
-      unit: { name: party.unit },
-      purchaseUnit,
-    });
+    return await this.partiesRepo.createParty(party);
   }
 
   async updateParty(party: UpdatePartyRequestI) {
-    let purchaseUnit: UnitI | undefined =
-      party.purchaseUnitName && party.purchaseUnitConversion
-        ? {
-            name: party.purchaseUnitName,
-            conversion: party.purchaseUnitConversion,
-          }
-        : undefined;
-    return await this.partiesRepo.updateParty(party.partyId, {
-      ...party,
-      unit: { name: party.unit },
-      purchaseUnit,
-      storeId: new Types.ObjectId(),
-      slug: "",
-    });
-  }
-
-  async createCategory(category: CreateCategoryRequestI) {
-    const { name } = category;
-    //convert the name to a unique slug
-    let slug = slugify(name, { lower: true });
-    return await this.partiesRepo.createCategory({ ...category, slug });
+    // return await this.partiesRepo.updateParty(party.partyId, {
+    //   ...party,
+    //   unit: { name: party.unit },
+    //   purchaseUnit,
+    //   storeId: new Types.ObjectId(),
+    //   slug: "",
+    // });
   }
 
   async getStorePartyById(storeId: string, partyId: string) {
