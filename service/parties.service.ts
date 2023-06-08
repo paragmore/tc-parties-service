@@ -16,11 +16,12 @@ export class PartiesService {
   async createParty(party: CreatePartyRequestI) {
     const { type } = party;
     if (type === PartyTypeEnum.CUSTOMER) {
-      await this.partiesRepo.createCustomerParty(party);
+      return await this.partiesRepo.createCustomerParty(party);
     }
     if (type === PartyTypeEnum.SUPPLIER) {
+      return await this.partiesRepo.createSupplierParty(party);
     }
-    return await this.partiesRepo.createParty(party);
+    return new ApiError("Party Type not found", 500);
   }
 
   async updateParty(party: UpdatePartyRequestI) {

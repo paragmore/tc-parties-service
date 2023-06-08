@@ -5,10 +5,12 @@ import {
   SortI,
   CustomerI,
   CustomerStoreInfoI,
+  SupplierI,
 } from "../types/types";
 import { MongooseError, SortOrder, Types } from "mongoose";
 import { CustomerModel } from "../models/customer.model";
 import { ApiError } from "../utils/ApiHelper";
+import { StoreModel } from "../models/store.model";
 
 @injectable()
 export class PartiesRepo {
@@ -52,12 +54,25 @@ export class PartiesRepo {
       ...party,
       customerId: customer._id,
     });
+    return { ...customerStoreInfo, phoneNumber: customer.phoneNumber };
   }
 
   async createSupplierParty(party: CreatePartyRequestI) {
-    const supplier = await this.createSupplier({
+    const supplierStore = await StoreModel.findOne({
       phoneNumber: party.phoneNumber,
     });
+    if (supplierStore) {
+      const supplier = await this.createSupplier({
+        ...party,
+        supplierStoreId: supplierStore._id,
+      });
+      return supplier;
+    } else {
+      const supplier = await this.createSupplier({
+        ...party,
+      });
+      return party;
+    }
   }
 
   async createCustomerStoreInfo(customerStoreInfo: CustomerStoreInfoI) {
