@@ -29,7 +29,7 @@ export default async (app: FastifyInstance) => {
 
   ApiHelper.get<GetPartiesQueryParamsI, GetAllStorePartiesParams, {}>(
     app,
-    "/:storeId",
+    "/:storeId/:type",
     partiesController.getAllStoreParties.bind(partiesController)
   );
 

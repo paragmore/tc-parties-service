@@ -81,7 +81,10 @@ export class PartiesRepo {
       ...party,
       customerId: customer._id,
     });
-    return { ...customerStoreInfo, phoneNumber: customer.phoneNumber };
+    return {
+      ...customerStoreInfo?.toObject(),
+      phoneNumber: customer.phoneNumber,
+    };
   }
 
   async createSupplierParty(party: CreatePartyRequestI) {
@@ -287,37 +290,41 @@ export class PartiesRepo {
     }
     console.log(sortBy);
     const skipCount = (page - 1) * pageSize;
-    let query = CustomerModel.find().where({ storeId });
-    let countQuery = CustomerModel.find().where({ storeId });
+    let query = CustomerStoreInfoModel.find().where({ storeId });
+    let countQuery = CustomerStoreInfoModel.find().where({ storeId });
     if (filterBy?.balance) {
+      const [operator, value] = filterBy.balance.split(",");
       let queryFilterString =
-        filterBy.balance === "gt"
+        operator === "gt"
           ? "$gt"
-          : filterBy.balance === "eq"
+          : operator === "eq"
           ? "$eq"
-          : filterBy.balance === "lt"
+          : operator === "lt"
           ? "$lt"
           : "";
       if (queryFilterString) {
-        query.where({ balance: { [queryFilterString]: 0 } });
-        countQuery.where({ balance: { [queryFilterString]: 0 } });
+        query.where({ balance: { [queryFilterString]: parseFloat(value) } });
+        countQuery.where({
+          balance: { [queryFilterString]: parseFloat(value) },
+        });
       }
     }
     const parties = await query
       .sort(sortBy)
       .skip(skipCount)
       .limit(pageSize)
-      .populate({
-        path: "customer",
-        model: "CustomerStoreInfo",
-        populate: {
-          path: "customerId",
-          model: "Customer",
-        },
-      })
+      .populate("customerId")
       .exec();
     const totalCount = await countQuery.countDocuments().exec();
-    return { parties, totalCount };
+    const formattedParties = parties.map((party) => ({
+      customer: party.customerId,
+      customerStoreInfo: {
+        ...party?.toObject(),
+        customerId: party.customerId._id,
+      },
+    }));
+
+    return { parties: formattedParties, totalCount };
   }
 
   async getAllStoreSuppliers(

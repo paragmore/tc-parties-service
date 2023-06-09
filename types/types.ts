@@ -89,11 +89,11 @@ export interface GetPartyByIdQueryParams {
 }
 
 export interface PartiesFilterByI {
-  balance?: "lt" | "eq" | "gt";
+  balance?: string;
 }
 
 export interface PartiesFilterByQueryI {
-  balance?: "lt" | "eq" | "gt";
+  balance?: string;
 }
 
 export interface SortI {
