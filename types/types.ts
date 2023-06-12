@@ -88,6 +88,11 @@ export interface GetPartyByIdQueryParams {
   type: PartyTypeEnum;
 }
 
+export interface GetStoreTotalBalanceParams {
+  storeId: string;
+  type: PartyTypeEnum;
+}
+
 export interface PartiesFilterByI {
   balance?: string;
 }

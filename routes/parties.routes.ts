@@ -8,6 +8,7 @@ import {
   GetAllStorePartiesParams,
   GetPartiesQueryParamsI,
   GetPartyByIdQueryParams,
+  GetStoreTotalBalanceParams,
   UpdatePartyRequestI,
 } from "../types/types";
 
@@ -37,5 +38,11 @@ export default async (app: FastifyInstance) => {
     app,
     "/:storeId/:type/:partyId",
     partiesController.getStorePartyById.bind(partiesController)
+  );
+
+  ApiHelper.get<{}, GetStoreTotalBalanceParams, {}>(
+    app,
+    "/balance/:storeId/:type",
+    partiesController.getStorePartiesTotalBalance.bind(partiesController)
   );
 };

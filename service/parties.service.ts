@@ -54,6 +54,21 @@ export class PartiesService {
     }
   }
 
+  async getStorePartiesTotalBalance(storeId: string, type: PartyTypeEnum) {
+    try {
+      if (type === PartyTypeEnum.CUSTOMER) {
+        return await this.partiesRepo.getStoreCustomersTotalBalance(storeId);
+      }
+      if (type === PartyTypeEnum.SUPPLIER) {
+        return await this.partiesRepo.getStoreSuppliersTotalBalance(storeId);
+      }
+      return new ApiError("Party Type not found", 500);
+    } catch (error) {
+      console.log("getStorePartiesTotalBalance service", error);
+      return new ApiError("Something went wrong, Please try again", 500);
+    }
+  }
+
   async getAllStoreParties(
     storeId: string,
     type: PartyTypeEnum,

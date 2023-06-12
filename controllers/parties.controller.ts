@@ -11,6 +11,7 @@ import {
   GetAllStorePartiesParams,
   GetPartiesQueryParamsI,
   GetPartyByIdQueryParams,
+  GetStoreTotalBalanceParams,
   PartyTypeEnum,
   UpdatePartyRequestI,
 } from "../types/types";
@@ -171,6 +172,46 @@ export class PartiesController {
       partyId,
       type
     );
+    if (!partiesResponse) {
+      return ApiHelper.success(
+        reply,
+        "Party with the given id not found in the store"
+      );
+    }
+    if (partiesResponse instanceof ApiError) {
+      return ApiHelper.callFailed(
+        reply,
+        partiesResponse.message,
+        partiesResponse.code
+      );
+    }
+    ApiHelper.success(reply, partiesResponse);
+  };
+
+  getStorePartiesTotalBalance: ApiHelperHandler<
+    {},
+    {},
+    {},
+    GetStoreTotalBalanceParams,
+    IReply
+  > = async (request, reply) => {
+    const { params } = request;
+    const { storeId, type } = params;
+
+    if (!Object.values(PartyTypeEnum).includes(type)) {
+      return ApiHelper.callFailed(
+        reply,
+        "Please provide correct party type",
+        400
+      );
+    }
+    const isValidStoreId = isValidObjectId(storeId);
+    if (!isValidStoreId) {
+      return ApiHelper.callFailed(reply, "Please pass valid storeId", 400);
+    }
+
+    const partiesResponse =
+      await this.partiesService.getStorePartiesTotalBalance(storeId, type);
     if (!partiesResponse) {
       return ApiHelper.success(
         reply,

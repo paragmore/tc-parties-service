@@ -7,8 +7,10 @@ import {
   CustomerStoreInfoI,
   SupplierI,
   UpdatePartyRequestI,
+  AddressI,
+  AdrressesI,
 } from "../types/types";
-import { MongooseError, SortOrder, Types } from "mongoose";
+import mongoose, { MongooseError, SortOrder, Types } from "mongoose";
 import { CustomerModel } from "../models/customer.model";
 import { ApiError } from "../utils/ApiHelper";
 import { StoreModel } from "../models/store.model";
@@ -77,9 +79,16 @@ export class PartiesRepo {
     const customer = await this.createCustomer({
       phoneNumber: party.phoneNumber,
     });
+    const address: AdrressesI = party.address.billingSameAsShipping
+      ? {
+          shipping: party.address.shipping,
+          billingSameAsShipping: party.address.billingSameAsShipping,
+        }
+      : party.address;
     const customerStoreInfo = await this.createCustomerStoreInfo({
       ...party,
       customerId: customer._id,
+      addresses: [address],
     });
     return {
       ...customerStoreInfo?.toObject(),
@@ -91,10 +100,17 @@ export class PartiesRepo {
     const supplierStore = await StoreModel.findOne({
       phoneNumber: party.phoneNumber,
     });
+    const address: AdrressesI = party.address.billingSameAsShipping
+      ? {
+          shipping: party.address.shipping,
+          billingSameAsShipping: party.address.billingSameAsShipping,
+        }
+      : party.address;
     if (supplierStore) {
       const supplier = await this.createSupplier({
         ...party,
         supplierStoreId: supplierStore._id,
+        addresses: [address],
       });
       return supplier;
     } else {
@@ -240,7 +256,6 @@ export class PartiesRepo {
   async getStoreCustomerById(storeId: string, customerId: string) {
     try {
       const customer = await CustomerModel.findOne({
-        storeId,
         _id: customerId,
       });
       const customerStoreInfo = await CustomerStoreInfoModel.findOne({
@@ -248,6 +263,69 @@ export class PartiesRepo {
         customerId,
       });
       return { customer, customerStoreInfo };
+    } catch (error) {
+      const mongooseError = error as MongooseError;
+      console.log(mongooseError.name);
+      if (mongooseError.name === "CastError") {
+        return new ApiError("Please pass valid customer id", 400);
+      }
+      return new ApiError(mongooseError.message, 500);
+    }
+  }
+
+  getBalanceTotalMongoPipeline(storeId: string) {
+    console.log(storeId);
+    return [
+      {
+        $match: { storeId: new mongoose.Types.ObjectId(storeId) },
+      },
+      {
+        $group: {
+          _id: null,
+          totalBalanceLessThanZero: {
+            $sum: {
+              $cond: [{ $lt: ["$balance", 0] }, "$balance", 0],
+            },
+          },
+          totalBalanceGreaterThanZero: {
+            $sum: {
+              $cond: [{ $gt: ["$balance", 0] }, "$balance", 0],
+            },
+          },
+        },
+      },
+    ];
+  }
+
+  async getStoreCustomersTotalBalance(storeId: string) {
+    try {
+      const pipeline = this.getBalanceTotalMongoPipeline(storeId);
+      const result = await CustomerStoreInfoModel.aggregate(pipeline);
+      console.log(result);
+      if (result.length > 0) {
+        return result[0];
+      } else {
+        return new ApiError(`No customers found for storeId ${storeId}.`, 400);
+      }
+    } catch (error) {
+      const mongooseError = error as MongooseError;
+      console.log(mongooseError.name);
+      if (mongooseError.name === "CastError") {
+        return new ApiError("Please pass valid customer id", 400);
+      }
+      return new ApiError(mongooseError.message, 500);
+    }
+  }
+
+  async getStoreSuppliersTotalBalance(storeId: string) {
+    try {
+      const pipeline = this.getBalanceTotalMongoPipeline(storeId);
+      const result = await SupplierModel.aggregate(pipeline);
+      if (result.length > 0) {
+        return result[0];
+      } else {
+        return new ApiError(`No customers found for storeId ${storeId}.`, 400);
+      }
     } catch (error) {
       const mongooseError = error as MongooseError;
       console.log(mongooseError.name);
