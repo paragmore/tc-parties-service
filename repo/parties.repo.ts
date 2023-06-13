@@ -75,10 +75,34 @@ export class PartiesRepo {
     return createdCustomer;
   }
 
+  async getOrCreateCustomerByPhone(phoneNumber: string) {
+    try {
+      const customer = await CustomerModel.findOne({
+        phoneNumber: phoneNumber,
+      }).sort({
+        createdAt: -1,
+      });
+      if (!customer) {
+        const customerDocument = new CustomerModel({
+          phoneNumber: phoneNumber,
+        });
+        return await customerDocument.save();
+      }
+      return customer;
+    } catch (error) {
+      console.log(
+        "Error caught in AuthRepo: getOrCreateCustomerByPhone => ",
+        error
+      );
+      return new ApiError("Some error occurred while customer creation", 500);
+    }
+  }
+
   async createCustomerParty(party: CreatePartyRequestI) {
-    const customer = await this.createCustomer({
-      phoneNumber: party.phoneNumber,
-    });
+    const customer = await this.getOrCreateCustomerByPhone(party.phoneNumber);
+    if (customer instanceof ApiError) {
+      return customer;
+    }
     const address: AdrressesI = party.address.billingSameAsShipping
       ? {
           shipping: party.address.shipping,

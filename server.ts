@@ -11,7 +11,8 @@ import { config } from "dotenv";
 
 // Load environment variables from .env file
 config();
-const PORT = process.env.PORT || 8020);
+const PORT = parseInt(process.env.PORT || "8020");
+const HOST = process.env.HOST || "0.0.0.0";
 const app: FastifyInstance = fastify({
   logger: true,
   disableRequestLogging: true,
@@ -21,10 +22,18 @@ const underPressureConfig = () => {
   return {
     healthCheck: async function () {
       // TODO: Add database connection check
-      return true;
+      return { host: HOST, port: PORT, api: "login" };
     },
     message: "Under Pressure 😯",
-    exposeStatusRoute: "/status",
+    exposeStatusRoute: {
+      routeOpts: {},
+      routeResponseSchemaOpts: {
+        host: { type: "string" },
+        port: { type: "string" },
+        api: { type: "string" },
+      },
+      url: "/status",
+    },
     healthCheckInterval: 5000,
   };
 };
@@ -43,7 +52,7 @@ const swaggerConfig = () => {
       produces: ["application/json"],
     },
     exposeRoute: true,
-    host: "localhost",
+    host: HOST,
   };
 };
 
