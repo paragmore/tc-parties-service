@@ -22,7 +22,7 @@ const underPressureConfig = () => {
   return {
     healthCheck: async function () {
       // TODO: Add database connection check
-      return { host: HOST, port: PORT, api: "login" };
+      return { host: HOST, port: PORT, api: "parties" };
     },
     message: "Under Pressure 😯",
     exposeStatusRoute: {
