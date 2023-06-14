@@ -24,12 +24,12 @@ deploy_production:
     script:
         - apk update
         - apk add --update --no-cache openssh sshpass
-        - mkdir products-api
-        - chmod +x products-api
-        - mv docker-compose.yml products-api/docker-compose.yml
+        - mkdir parties-api
+        - chmod +x parties-api
+        - mv docker-compose.yml parties-api/docker-compose.yml
         - echo $SERVER_SSH_KEY | base64 -d > my_ssh
         - chmod 400 my_ssh
-        - sshpass scp -i my_ssh -o stricthostkeychecking=no -r products-api ubuntu@${SERVER_IP}:~/
-        - sshpass ssh -i my_ssh -o StrictHostKeyChecking=no ubuntu@${SERVER_IP} "cd ~/products-api;sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY};sudo docker-compose down;sudo docker image rm ${CI_REGISTRY_IMAGE}:production;sudo docker-compose up -d;"
+        - sshpass scp -i my_ssh -o stricthostkeychecking=no -r parties-api ubuntu@${SERVER_IP}:~/
+        - sshpass ssh -i my_ssh -o StrictHostKeyChecking=no ubuntu@${SERVER_IP} "cd ~/parties-api;sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY};sudo docker-compose down;sudo docker image rm ${CI_REGISTRY_IMAGE}:production;sudo docker-compose up -d;"
     only:
         - master
