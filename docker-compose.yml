@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  products_api:
+  parties_api:
     image: registry.gitlab.com/taxpayercorner-vs/microservices/parties-service:production
     ports:
      - "8020:8020"
