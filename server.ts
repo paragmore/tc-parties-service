@@ -8,6 +8,7 @@ import fastifyStatic from "@fastify/static";
 import path from "path";
 import { connectMongoDB } from "./mongoose.config";
 import { config } from "dotenv";
+import { environment } from "./utils/environment";
 
 // Load environment variables from .env file
 config();
@@ -22,7 +23,7 @@ const underPressureConfig = () => {
   return {
     healthCheck: async function () {
       // TODO: Add database connection check
-      return { host: HOST, port: PORT, api: "parties" };
+      return { host: HOST, port: PORT, api: "parties", version: environment.version };
     },
     message: "Under Pressure 😯",
     exposeStatusRoute: {
@@ -31,6 +32,7 @@ const underPressureConfig = () => {
         host: { type: "string" },
         port: { type: "string" },
         api: { type: "string" },
+        version: { type: 'string'},
       },
       url: "/status",
     },
