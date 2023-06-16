@@ -11,7 +11,7 @@ import { config } from "dotenv";
 
 // Load environment variables from .env file
 config();
-const PORT = parseInt(process.env.PORT || "8020");
+const PORT = process.env.PORT || 8020;
 const HOST = process.env.HOST || "0.0.0.0";
 const app: FastifyInstance = fastify({
   logger: true,
@@ -78,7 +78,7 @@ app.register(require("@fastify/swagger-ui"), {
 });
 app.register(Routes);
 connectMongoDB();
-app.listen(PORT, (error, address) => {
+app.listen(PORT, "0.0.0.0" , (error, address) => {
   if (error) {
     app.log.error(error);
     process.exit(1);
