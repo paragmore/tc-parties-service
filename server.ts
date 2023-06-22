@@ -8,10 +8,11 @@ import fastifyStatic from "@fastify/static";
 import path from "path";
 import { connectMongoDB } from "./mongoose.config";
 import { config } from "dotenv";
+import { environment } from "./utils/environment";
 
 // Load environment variables from .env file
 config();
-const PORT = parseInt(process.env.PORT || "8020");
+const PORT = process.env.PORT || 8020;
 const HOST = process.env.HOST || "0.0.0.0";
 const app: FastifyInstance = fastify({
   logger: true,
@@ -22,7 +23,7 @@ const underPressureConfig = () => {
   return {
     healthCheck: async function () {
       // TODO: Add database connection check
-      return { host: HOST, port: PORT, api: "parties" };
+      return { host: HOST, port: PORT, api: "parties", version: environment.version };
     },
     message: "Under Pressure 😯",
     exposeStatusRoute: {
@@ -31,6 +32,7 @@ const underPressureConfig = () => {
         host: { type: "string" },
         port: { type: "string" },
         api: { type: "string" },
+        version: { type: 'string'},
       },
       url: "/status",
     },
@@ -78,7 +80,7 @@ app.register(require("@fastify/swagger-ui"), {
 });
 app.register(Routes);
 connectMongoDB();
-app.listen(PORT, (error, address) => {
+app.listen(PORT, "0.0.0.0" , (error, address) => {
   if (error) {
     app.log.error(error);
     process.exit(1);
