@@ -396,20 +396,22 @@ export class PartiesRepo {
     let countQuery = CustomerStoreInfoModel.find().where({ storeId });
     if (filterBy?.balance) {
       const [operator, value] = filterBy.balance.split(",");
-      let queryFilterString =
-        operator === "gt"
-          ? "$gt"
-          : operator === "eq"
-          ? "$eq"
-          : operator === "lt"
-          ? "$lt"
-          : "";
-      if (queryFilterString) {
-        query.where({ balance: { [queryFilterString]: parseFloat(value) } });
-        countQuery.where({
-          balance: { [queryFilterString]: parseFloat(value) },
-        });
+      let queryFilter = {};
+
+      if (operator === "gt") {
+        queryFilter = { $gt: parseFloat(value) };
+      } else if (operator === "eq") {
+        queryFilter =
+          parseFloat(value) === 0
+            ? { $in: [0, undefined] }
+            : { $eq: parseFloat(value) };
+      } else if (operator === "lt") {
+        queryFilter = { $lt: parseFloat(value) };
       }
+      query.where({ balance: queryFilter });
+      countQuery.where({
+        balance: queryFilter,
+      });
     }
     const parties = await query
       .sort(sortBy)
@@ -447,18 +449,23 @@ export class PartiesRepo {
     let query = SupplierModel.find().where({ storeId });
     let countQuery = SupplierModel.find().where({ storeId });
     if (filterBy?.balance) {
-      let queryFilterString =
-        filterBy.balance === "gt"
-          ? "$gt"
-          : filterBy.balance === "eq"
-          ? "$eq"
-          : filterBy.balance === "lt"
-          ? "$lt"
-          : "";
-      if (queryFilterString) {
-        query.where({ balance: { [queryFilterString]: 0 } });
-        countQuery.where({ balance: { [queryFilterString]: 0 } });
+      const [operator, value] = filterBy.balance.split(",");
+      let queryFilter = {};
+
+      if (operator === "gt") {
+        queryFilter = { $gt: parseFloat(value) };
+      } else if (operator === "eq") {
+        queryFilter =
+          parseFloat(value) === 0
+            ? { $in: [0, undefined] }
+            : { $eq: parseFloat(value) };
+      } else if (operator === "lt") {
+        queryFilter = { $lt: parseFloat(value) };
       }
+      query.where({ balance: queryFilter });
+      countQuery.where({
+        balance: queryFilter,
+      });
     }
     const parties = await query
       .sort(sortBy)
