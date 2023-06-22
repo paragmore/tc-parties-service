@@ -34,6 +34,10 @@ const customerStoreInfoSchema = new Schema({
   gstin: {
     type: String,
   },
+  gstType: {
+    type: String,
+    required: true,
+  },
 });
 
 export const CustomerStoreInfoModel = mongoose.model(

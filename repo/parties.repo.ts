@@ -60,6 +60,7 @@ export class PartiesRepo {
       storeId,
       balance,
       supplierStoreId,
+      gstType,
     } = createSupplierRequest;
     const createdCustomer = await SupplierModel.create({
       phoneNumber,
@@ -71,6 +72,7 @@ export class PartiesRepo {
       storeId,
       balance,
       supplierStoreId,
+      gstType,
     });
     return createdCustomer;
   }
@@ -156,6 +158,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      gstType,
     } = customerStoreInfo;
     const createdCustomerStoreInfo = await CustomerStoreInfoModel.create({
       addresses,
@@ -167,6 +170,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      gstType,
     });
     return createdCustomerStoreInfo;
   }
@@ -213,6 +217,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      gstType,
     } = customerStoreInfo;
     const updatedCustomerStoreInfo =
       await CustomerStoreInfoModel.findOneAndUpdate(
@@ -226,6 +231,7 @@ export class PartiesRepo {
           email,
           gstin,
           name,
+          gstType,
         }
       );
     return updatedCustomerStoreInfo;
@@ -255,6 +261,7 @@ export class PartiesRepo {
       storeId,
       balance,
       supplierStoreId,
+      gstType,
     } = updateSupplierRequest;
     const createdCustomer = await SupplierModel.findByIdAndUpdate(supplierId, {
       phoneNumber,
@@ -266,6 +273,7 @@ export class PartiesRepo {
       storeId,
       balance,
       supplierStoreId,
+      gstType,
     });
     return createdCustomer;
   }

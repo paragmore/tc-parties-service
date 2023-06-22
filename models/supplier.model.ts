@@ -19,6 +19,10 @@ const supplierSchema = new Schema(
     gstin: {
       type: String,
     },
+    gstType: {
+      type: String,
+      required: true,
+    },
     addresses: [addressesSchema],
     photoUrl: {
       type: String,

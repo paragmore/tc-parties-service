@@ -28,7 +28,8 @@ export class PartiesController {
         !body.storeId ||
         !body.name ||
         !body.phoneNumber ||
-        !body.type
+        !body.type ||
+        !body.gstType
       ) {
         return ApiHelper.missingParameters(reply);
       }
