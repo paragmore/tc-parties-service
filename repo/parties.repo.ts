@@ -237,11 +237,14 @@ export class PartiesRepo {
     return updatedCustomerStoreInfo;
   }
   async updateCustomerParty(party: UpdatePartyRequestI) {
+    //this needs to support multiple addressed currently on one supported
+    const addresses: Array<AdrressesI> = party.address ? [party.address] : [];
     const customerStoreInfo = await this.updateCustomerStoreInfo(
       party.partyId,
       {
         ...party,
         customerId: party.partyId,
+        addresses,
       }
     );
     return customerStoreInfo;
@@ -279,8 +282,11 @@ export class PartiesRepo {
   }
 
   async updateSupplierParty(party: UpdatePartyRequestI) {
+    //this needs to support multiple addressed currently on one supported
+    const addresses: Array<AdrressesI> = party.address ? [party.address] : [];
     const supplier = await this.updateSupplier(party.partyId, {
       ...party,
+      addresses,
     });
     return supplier;
   }
@@ -422,6 +428,7 @@ export class PartiesRepo {
       });
     }
     const parties = await query
+      .collation({ locale: "en", strength: 2 }) // Using English language rules with case-insensitivity
       .sort(sortBy)
       .skip(skipCount)
       .limit(pageSize)
@@ -476,6 +483,7 @@ export class PartiesRepo {
       });
     }
     const parties = await query
+      .collation({ locale: "en", strength: 2 }) // Using English language rules with case-insensitivity
       .sort(sortBy)
       .skip(skipCount)
       .limit(pageSize)
