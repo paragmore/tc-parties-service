@@ -49,6 +49,9 @@ export class PartiesController {
 
       try {
         const response = await this.partiesService.createParty(body);
+        if (response instanceof ApiError) {
+          return ApiHelper.callFailed(reply, response.message, response.code);
+        }
         return ApiHelper.success(reply, response);
       } catch (error) {
         //@ts-ignore

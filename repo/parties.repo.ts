@@ -116,6 +116,9 @@ export class PartiesRepo {
       customerId: customer._id,
       addresses: [address],
     });
+    if (customerStoreInfo instanceof ApiError) {
+      return customerStoreInfo;
+    }
     return {
       ...customerStoreInfo?.toObject(),
       phoneNumber: customer.phoneNumber,
@@ -148,6 +151,18 @@ export class PartiesRepo {
   }
 
   async createCustomerStoreInfo(customerStoreInfo: CustomerStoreInfoI) {
+    const existingCustomerStoreInfo = await CustomerStoreInfoModel.findOne({
+      customerId: customerStoreInfo.customerId,
+      storeId: customerStoreInfo.storeId,
+    }).sort({
+      createdAt: -1,
+    });
+    if (existingCustomerStoreInfo) {
+      return new ApiError(
+        "Customer already exists with give phone number",
+        400
+      );
+    }
     const {
       addresses,
       balance,
