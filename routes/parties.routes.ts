@@ -5,6 +5,7 @@ import container from "../inversify.config";
 import { ApiHelper } from "../utils/ApiHelper";
 import {
   CreatePartyRequestI,
+  DeletePartiesRequestI,
   GetAllStorePartiesParams,
   GetPartiesQueryParamsI,
   GetPartyByIdQueryParams,
@@ -44,5 +45,10 @@ export default async (app: FastifyInstance) => {
     app,
     "/balance/:storeId/:type",
     partiesController.getStorePartiesTotalBalance.bind(partiesController)
+  );
+  ApiHelper.post<DeletePartiesRequestI, {}, {}, {}>(
+    app,
+    "/delete",
+    partiesController.softDeleteParties.bind(partiesController)
   );
 };
