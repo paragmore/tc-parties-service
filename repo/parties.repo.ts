@@ -205,17 +205,21 @@ export class PartiesRepo {
       name,
       photoUrl,
     } = updateCustomerRequest;
-    const updatedCustomer = await CustomerModel.findByIdAndUpdate(customerId, {
-      addresses,
-      favouriteProducts,
-      reviews,
-      searchQueries,
-      email,
-      gstin,
-      lastLogin,
-      name,
-      photoUrl,
-    });
+    const updatedCustomer = await CustomerModel.findByIdAndUpdate(
+      customerId,
+      {
+        addresses,
+        favouriteProducts,
+        reviews,
+        searchQueries,
+        email,
+        gstin,
+        lastLogin,
+        name,
+        photoUrl,
+      },
+      { new: true }
+    );
     return updatedCustomer;
   }
 
@@ -247,7 +251,8 @@ export class PartiesRepo {
           gstin,
           name,
           gstType,
-        }
+        },
+        { new: true }
       );
     return updatedCustomerStoreInfo;
   }
@@ -281,18 +286,22 @@ export class PartiesRepo {
       supplierStoreId,
       gstType,
     } = updateSupplierRequest;
-    const createdCustomer = await SupplierModel.findByIdAndUpdate(supplierId, {
-      phoneNumber,
-      addresses,
-      email,
-      gstin,
-      name,
-      photoUrl,
-      storeId,
-      balance,
-      supplierStoreId,
-      gstType,
-    });
+    const createdCustomer = await SupplierModel.findByIdAndUpdate(
+      supplierId,
+      {
+        phoneNumber,
+        addresses,
+        email,
+        gstin,
+        name,
+        photoUrl,
+        storeId,
+        balance,
+        supplierStoreId,
+        gstType,
+      },
+      { new: true }
+    );
     return createdCustomer;
   }
 
