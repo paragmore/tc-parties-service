@@ -36,6 +36,9 @@ const supplierSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Store",
     },
+    isDeleted: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );

@@ -305,6 +305,22 @@ export class PartiesRepo {
     return createdCustomer;
   }
 
+  async softDeleteSuppliers(storeId: string, customerIds: string[]) {
+    const deletedResponse = await SupplierModel.updateMany(
+      { storeId, _id: { $in: [...customerIds] } },
+      { isDeleted: true }
+    );
+    return deletedResponse;
+  }
+
+  async softDeleteCustomerStoreInfo(storeId: string, customerIds: string[]) {
+    const deletedResponse = await CustomerStoreInfoModel.updateMany(
+      { storeId, customerId: { $in: [...customerIds] } },
+      { isDeleted: true }
+    );
+    return deletedResponse;
+  }
+
   async updateSupplierParty(party: UpdatePartyRequestI) {
     //this needs to support multiple addressed currently on one supported
     const addresses: Array<AdrressesI> = party.address ? [party.address] : [];
@@ -430,8 +446,14 @@ export class PartiesRepo {
     }
     console.log(sortBy);
     const skipCount = (page - 1) * pageSize;
-    let query = CustomerStoreInfoModel.find().where({ storeId });
-    let countQuery = CustomerStoreInfoModel.find().where({ storeId });
+    let query = CustomerStoreInfoModel.find().where({
+      storeId,
+      isDeleted: { $ne: true },
+    });
+    let countQuery = CustomerStoreInfoModel.find().where({
+      storeId,
+      isDeleted: { $ne: true },
+    });
     if (filterBy?.balance) {
       const [operator, value] = filterBy.balance.split(",");
       let queryFilter = {};
@@ -485,8 +507,14 @@ export class PartiesRepo {
     }
     console.log(sortBy);
     const skipCount = (page - 1) * pageSize;
-    let query = SupplierModel.find().where({ storeId });
-    let countQuery = SupplierModel.find().where({ storeId });
+    let query = SupplierModel.find().where({
+      storeId,
+      isDeleted: { $ne: true },
+    });
+    let countQuery = SupplierModel.find().where({
+      storeId,
+      isDeleted: { $ne: true },
+    });
     if (filterBy?.balance) {
       const [operator, value] = filterBy.balance.split(",");
       let queryFilter = {};

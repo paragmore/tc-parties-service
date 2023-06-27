@@ -13,6 +13,12 @@ export interface UpdatePartyRequestI {
   address?: AdrressesI;
 }
 
+export interface DeletePartiesRequestI {
+  storeId: string;
+  type: PartyTypeEnum;
+  partyIds: string[];
+}
+
 export enum PartyTypeEnum {
   CUSTOMER = "customer",
   SUPPLIER = "supplier",

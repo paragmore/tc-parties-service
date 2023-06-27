@@ -38,6 +38,9 @@ const customerStoreInfoSchema = new Schema({
     type: String,
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+  },
 });
 
 export const CustomerStoreInfoModel = mongoose.model(

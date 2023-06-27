@@ -35,6 +35,28 @@ export class PartiesService {
     return new ApiError("Party Type not found", 500);
   }
 
+  async softDeleteParties(
+    storeId: string,
+    type: PartyTypeEnum,
+    partyIds: string[]
+  ) {
+    try {
+      if (type === PartyTypeEnum.CUSTOMER) {
+        return await this.partiesRepo.softDeleteCustomerStoreInfo(
+          storeId,
+          partyIds
+        );
+      }
+      if (type === PartyTypeEnum.SUPPLIER) {
+        return await this.partiesRepo.softDeleteSuppliers(storeId, partyIds);
+      }
+      return new ApiError("Party Type not found", 500);
+    } catch (error) {
+      console.log("softDeleteCategories service", error);
+      return new ApiError("Something went wrong, Please try again", 500);
+    }
+  }
+
   async getStorePartyById(
     storeId: string,
     partyId: string,

@@ -8,6 +8,7 @@ import {
 } from "../utils/ApiHelper";
 import {
   CreatePartyRequestI,
+  DeletePartiesRequestI,
   GetAllStorePartiesParams,
   GetPartiesQueryParamsI,
   GetPartyByIdQueryParams,
@@ -86,6 +87,41 @@ export class PartiesController {
         return ApiHelper.callFailed(reply, error.message, 500);
       }
     };
+
+  softDeleteParties: ApiHelperHandler<
+    DeletePartiesRequestI,
+    {},
+    {},
+    {},
+    IReply
+  > = async (request, reply) => {
+    const { body } = request;
+    if (!body || !body.storeId || !body.type || !body.partyIds) {
+      return ApiHelper.missingParameters(reply);
+    }
+    const isValidStoreId = isValidObjectId(body.storeId);
+    if (!isValidStoreId) {
+      return ApiHelper.callFailed(reply, "Please pass valid storeId", 400);
+    }
+    try {
+      const deleteResponse = await this.partiesService.softDeleteParties(
+        body.storeId,
+        body.type,
+        body.partyIds
+      );
+      if (deleteResponse instanceof ApiError) {
+        return ApiHelper.callFailed(
+          reply,
+          deleteResponse.message,
+          deleteResponse.code
+        );
+      }
+      return ApiHelper.success(reply, deleteResponse);
+    } catch (error) {
+      //@ts-ignore
+      return ApiHelper.callFailed(reply, error.message, 500);
+    }
+  };
 
   getAllStoreParties: ApiHelperHandler<
     {},
