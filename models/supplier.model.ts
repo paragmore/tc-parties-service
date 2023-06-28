@@ -9,6 +9,9 @@ const supplierSchema = new Schema(
     email: {
       type: String,
     },
+    tradeName: {
+      type: String,
+    },
     name: {
       type: String,
     },
