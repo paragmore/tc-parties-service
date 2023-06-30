@@ -32,6 +32,7 @@ export class PartiesRepo {
       gstin,
       lastLogin,
       name,
+      tradeName,
       photoUrl,
     } = createCustomerRequest;
     const createdCustomer = await CustomerModel.create({
@@ -44,6 +45,7 @@ export class PartiesRepo {
       gstin,
       lastLogin,
       name,
+      tradeName,
       photoUrl,
     });
     return createdCustomer;
@@ -56,6 +58,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      tradeName,
       photoUrl,
       storeId,
       balance,
@@ -68,6 +71,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      tradeName,
       photoUrl,
       storeId,
       balance,
@@ -173,6 +177,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      tradeName,
       gstType,
     } = customerStoreInfo;
     const createdCustomerStoreInfo = await CustomerStoreInfoModel.create({
@@ -185,6 +190,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      tradeName,
       gstType,
     });
     return createdCustomerStoreInfo;
@@ -203,6 +209,7 @@ export class PartiesRepo {
       gstin,
       lastLogin,
       name,
+      tradeName,
       photoUrl,
     } = updateCustomerRequest;
     const updatedCustomer = await CustomerModel.findByIdAndUpdate(
@@ -216,6 +223,7 @@ export class PartiesRepo {
         gstin,
         lastLogin,
         name,
+        tradeName,
         photoUrl,
       },
       { new: true }
@@ -236,6 +244,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      tradeName,
       gstType,
     } = customerStoreInfo;
     const updatedCustomerStoreInfo =
@@ -250,6 +259,7 @@ export class PartiesRepo {
           email,
           gstin,
           name,
+          tradeName,
           gstType,
         },
         { new: true }
@@ -280,6 +290,7 @@ export class PartiesRepo {
       email,
       gstin,
       name,
+      tradeName,
       photoUrl,
       storeId,
       balance,
@@ -294,6 +305,7 @@ export class PartiesRepo {
         email,
         gstin,
         name,
+        tradeName,
         photoUrl,
         storeId,
         balance,

@@ -25,6 +25,9 @@ const customerStoreInfoSchema = new Schema({
   name: {
     type: String,
   },
+  tradeName: {
+    type: String,
+  },
   addresses: [addressesSchema],
   customerId: {
     type: Schema.Types.ObjectId,

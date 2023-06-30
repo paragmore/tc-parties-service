@@ -14,6 +14,9 @@ const customerSchema = new Schema(
     name: {
       type: String,
     },
+    tradeName: {
+      type: String,
+    },
     gstin: {
       type: String,
     },
